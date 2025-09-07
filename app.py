@@ -648,6 +648,26 @@ def delete_file(report_id):
     # flash("Report deleted.")
     return redirect(url_for("dashboard"))
 '''
+@app.route("/dashboard")
+def dashboard():
+    if "username" not in session:
+        return redirect(url_for("home1"))
+
+    user = User.query.filter_by(username=session["username"]).first()
+    if not user:  # session has invalid username
+        session.pop("username", None)
+        flash("Session expired. Please log in again.")
+        return redirect(url_for("home1"))
+
+    reports = (
+        MedicalReport.query.filter_by(user_id=user.id)
+        .order_by(MedicalReport.uploaded_at.desc())
+        .all()
+    )
+    return render_template("dashboard.html", username=user.username, reports=reports)
+
+
+
 @app.route("/upload", methods=["POST"])
 def upload():
     if "username" not in session:
