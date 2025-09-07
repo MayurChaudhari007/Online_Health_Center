@@ -384,7 +384,7 @@ db = SQLAlchemy(app)
 # app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024  # 2 MB max per file
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "doc", "docx"}
 
-os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+# os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 
 def allowed_file(filename: str) -> bool:
