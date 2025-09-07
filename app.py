@@ -9,7 +9,7 @@ from flask import (
     flash,
     abort,
     session,
-    send_file
+    send_file,
 )
 import io
 import concurrent.futures
@@ -369,8 +369,8 @@ app.secret_key = "your_secret_key"
 # ---------------------------
 # SQLAlchemy Config
 # ---------------------------
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -435,6 +435,7 @@ class Chat(db.Model):
 #     uploaded_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)
 #     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
+
 class MedicalReport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     original_name = db.Column(db.String(260), nullable=False)  # uploaded filename
@@ -445,6 +446,7 @@ class MedicalReport(db.Model):
 
     # NEW: store file content inside database
     data = db.Column(db.LargeBinary, nullable=False)
+
 
 with app.app_context():
     db.create_all()
@@ -516,7 +518,9 @@ def register():
 
 
 # Dashboard (upload + list files)
-'''
+
+
+
 @app.route("/dashboard")
 def dashboard():
     if "username" not in session:
@@ -534,138 +538,6 @@ def dashboard():
         .all()
     )
     return render_template("dashboard.html", username=user.username, reports=reports)
-
-
-# Upload handler
-@app.route("/upload", methods=["POST"])
-def upload():
-    if "username" not in session:
-        return redirect(url_for("home1"))
-
-    if "report" not in request.files:
-        flash("No file part in the form.")
-        return redirect(url_for("dashboard"))
-
-    file = request.files["report"]
-    if file.filename == "":
-        # flash("No file was selected.")
-        flash("No file was selected.", "warning")
-        return redirect(url_for("dashboard"))
-
-    if not allowed_file(file.filename):
-        # flash("File type not allowed. Allowed: pdf, png, jpg, jpeg, doc, docx")
-        flash(
-            "File type not allowed. Allowed: pdf, png, jpg, jpeg, doc, docx", "danger"
-        )
-        return redirect(url_for("dashboard"))
-
-    # Save the file
-    user = User.query.filter_by(username=session["username"]).first()
-    user_folder = os.path.join(app.config["UPLOAD_FOLDER"], str(user.id))
-    os.makedirs(user_folder, exist_ok=True)
-
-    safe_name = secure_filename(file.filename)
-    stored_name = f"{uuid4().hex}_{safe_name}"
-    save_path = os.path.join(user_folder, stored_name)
-
-    file.save(save_path)
-    size = os.path.getsize(save_path)
-
-    report = MedicalReport(
-        original_name=safe_name,
-        stored_name=stored_name,
-        mimetype=file.mimetype,
-        size=size,
-        user_id=user.id,
-    )
-    db.session.add(report)
-    db.session.commit()
-
-    # flash("Report uploaded successfully!")
-    flash("Report uploaded successfully!", "success")
-    return redirect(url_for("dashboard"))
-
-
-# Download handler (only owner can download)
-
-
-@app.route("/files/<int:report_id>")
-def download(report_id):
-    if "username" not in session:
-        return redirect(url_for("home1"))
-
-    user = User.query.filter_by(username=session["username"]).first()
-    report = MedicalReport.query.get_or_404(report_id)
-
-    # ✅ Ownership check
-    if report.user_id != user.id:
-        abort(403)
-
-    user_folder = os.path.join(app.config["UPLOAD_FOLDER"], str(user.id))
-    file_path = os.path.join(user_folder, report.stored_name)
-
-    # ❌ If file missing on disk → delete DB entry
-    if not os.path.exists(file_path):
-        db.session.delete(report)
-        db.session.commit()
-        flash("⚠️ File not found on server. Record removed from database.", "warning")
-        return redirect(url_for("dashboard"))
-
-    # ✅ Otherwise download file
-    return send_from_directory(
-        user_folder,
-        report.stored_name,
-        as_attachment=True,
-        download_name=report.original_name,
-        mimetype=report.mimetype,
-    )
-
-
-# Delete handler (POST) — only owner can delete
-@app.route("/files/<int:report_id>/delete", methods=["POST"])
-def delete_file(report_id):
-    if "username" not in session:
-        return redirect(url_for("home1"))
-
-    user = User.query.filter_by(username=session["username"]).first()
-    report = MedicalReport.query.get_or_404(report_id)
-
-    if report.user_id != user.id:
-        abort(403)
-
-    user_folder = os.path.join(app.config["UPLOAD_FOLDER"], str(user.id))
-    file_path = os.path.join(user_folder, report.stored_name)
-
-    try:
-        if os.path.exists(file_path):
-            os.remove(file_path)
-    except Exception as e:
-        app.logger.exception("Error deleting file: %s", e)
-
-    db.session.delete(report)
-    db.session.commit()
-    flash("Report deleted successfully!", "success")
-    # flash("Report deleted.")
-    return redirect(url_for("dashboard"))
-'''
-@app.route("/dashboard")
-def dashboard():
-    if "username" not in session:
-        return redirect(url_for("home1"))
-
-    user = User.query.filter_by(username=session["username"]).first()
-    if not user:  # session has invalid username
-        session.pop("username", None)
-        flash("Session expired. Please log in again.")
-        return redirect(url_for("home1"))
-
-    reports = (
-        MedicalReport.query.filter_by(user_id=user.id)
-        .order_by(MedicalReport.uploaded_at.desc())
-        .all()
-    )
-    return render_template("dashboard.html", username=user.username, reports=reports)
-
 
 
 @app.route("/upload", methods=["POST"])
@@ -683,7 +555,9 @@ def upload():
         return redirect(url_for("dashboard"))
 
     if not allowed_file(file.filename):
-        flash("File type not allowed. Allowed: pdf, png, jpg, jpeg, doc, docx", "danger")
+        flash(
+            "File type not allowed. Allowed: pdf, png, jpg, jpeg, doc, docx", "danger"
+        )
         return redirect(url_for("dashboard"))
 
     user = User.query.filter_by(username=session["username"]).first()
@@ -706,6 +580,10 @@ def upload():
     return redirect(url_for("dashboard"))
 
 
+# for download
+
+
+
 @app.route("/files/<int:report_id>")
 def download(report_id):
     if "username" not in session:
@@ -718,12 +596,14 @@ def download(report_id):
         abort(403)
 
     # Serve file directly from DB
+    
     return send_file(
         io.BytesIO(report.data),
         as_attachment=True,
         download_name=report.original_name,
         mimetype=report.mimetype,
     )
+    
 
 
 @app.route("/files/<int:report_id>/delete", methods=["POST"])
@@ -741,6 +621,7 @@ def delete_file(report_id):
     db.session.commit()
     flash("Report deleted successfully!", "success")
     return redirect(url_for("dashboard"))
+
 
 @app.route("/logout")
 def logout():

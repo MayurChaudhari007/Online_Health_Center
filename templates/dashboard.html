@@ -31,7 +31,7 @@
   </div>
 </div>
 
-<div class="container py-4" >
+<div class="container py-4">
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
   {% for category, msg in messages %}
@@ -42,7 +42,6 @@
   {% endfor %}
   {% endif %}
   {% endwith %}
-
 
   <div class="row g-4">
     <!-- Upload Card -->
@@ -57,7 +56,7 @@
           <form action="{{ url_for('upload') }}" method="post" id="uploadForm" enctype="multipart/form-data">
             <div class="mb-3">
               <input class="form-control rounded-pill" type="file" name="report" id="reportInput"
-                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" >
+                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx">
             </div>
             <button class="btn btn-primary w-100 rounded-pill" type="submit">Upload</button>
           </form>
@@ -97,7 +96,8 @@
                   <td>{{ r.size|filesize }}</td>
                   <td class="text-end">
                     <a class="btn btn-sm btn-outline-primary rounded-pill"
-                      href="{{ url_for('download', report_id=r.id) }}">
+                      href="{{ url_for('download', report_id=r.id) }}"
+                      onclick="showDownloadMessage()">
                       Download
                     </a>
                     <form action="{{ url_for('delete_file', report_id=r.id) }}" method="post" class="d-inline"
@@ -124,7 +124,11 @@
 </div>
 
 <script>
-  
+  function showDownloadMessage() {
+    setTimeout(() => {
+      alert("File downloaded successfully!");
+    }, 2000); // wait a bit so it feels like 'after' download
+  }
 </script>
 <script src="{{ url_for('static', filename='js/storage.js') }}"></script>
 
