@@ -1,13 +1,18 @@
 {% extends "base.html" %} {% block title%} Ai Predict {% endblock %} {% block
 extra_css %}
 
-<style>
 
-
-</style>
 
 <link rel="stylesheet" href="../static/css/ai_prediction.css" />
-{%endblock %} {% block content %}
+{%endblock %}
+{% block favicon %}
+<link rel="icon" type="image/png" href="../static/img/favicon/ai_predict/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="../static/img/favicon/ai_predict/favicon.svg" />
+<link rel="shortcut icon" href="../static/img/favicon/ai_predict/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="../static/img/favicon/ai_predict/apple-touch-icon.png" />
+<link rel="manifest" href="../static/img/favicon/ai_predict/site.webmanifest" />
+{% endblock favicon %}
+{% block content %}
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
   <div id="report-toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
     aria-atomic="true">

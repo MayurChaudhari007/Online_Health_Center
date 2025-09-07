@@ -3,6 +3,13 @@
 {% block extra_css %}
 <link rel="stylesheet" href="../static/css/home.css">
  {%endblock %}
+ {% block favicon %}
+    <link rel="icon" type="image/png" href="../static/img/favicon/home/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="../static/img/favicon/home/favicon.svg" />
+<link rel="shortcut icon" href="../static/img/favicon/home/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="../static/img/favicon/home/apple-touch-icon.png" />
+<link rel="manifest" href="../static/img/favicon/home/site.webmanifest" />
+  {% endblock favicon %}
 {% block content%}
 <!-- Hero Section -->
 <section class="text-center py-5 px-3 fade-in">

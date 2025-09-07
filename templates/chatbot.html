@@ -1,7 +1,16 @@
 {% extends "base.html"%} {% block title%} Chat Bot {% endblock %} {% block
 extra_css %}
 <link rel="stylesheet" href="../static/css/chatbot.css" />
-{%endblock %} {% block content%}
+{%endblock %}
+{% block favicon %}
+<link rel="icon" type="image/png" href="../static/img/favicon/chat_bot/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="../static/img/favicon/chat_bot/favicon.svg" />
+<link rel="shortcut icon" href="../static/img/favicon/chat_bot/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="../static/img/favicon/chat_bot/apple-touch-icon.png" />
+<link rel="manifest" href="../static/img/favicon/chat_bot/site.webmanifest" />
+{% endblock favicon %}
+
+{% block content%}
 <div class="chatbot-container">
 
   <!-- Hero Section -->
@@ -75,9 +84,9 @@ extra_css %}
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 {% for category, msg in messages %}
-<div class="" id="storage_container" >
+<div class="" id="storage_container">
   <!-- {{ msg }} -->
-  
+
 </div>
 {% endfor %}
 {% endif %}

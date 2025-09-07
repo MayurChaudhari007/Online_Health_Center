@@ -4,6 +4,15 @@
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/storage.css') }}">
 {%endblock %}
+
+{% block favicon %}
+<link rel="icon" type="image/png" href="../static/img/favicon/storage/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="../static/img/favicon/storage/favicon.svg" />
+<link rel="shortcut icon" href="../static/img/favicon/storage/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="../static/img/favicon/storage/apple-touch-icon.png" />
+<link rel="manifest" href="../static/img/favicon/storage/site.webmanifest" />
+{% endblock favicon %}
+
 {% block content %}
 
 <div class="storage-info">
@@ -96,8 +105,7 @@
                   <td>{{ r.size|filesize }}</td>
                   <td class="text-end">
                     <a class="btn btn-sm btn-outline-primary rounded-pill"
-                      href="{{ url_for('download', report_id=r.id) }}"
-                      onclick="showDownloadMessage()">
+                      href="{{ url_for('download', report_id=r.id) }}" onclick="showDownloadMessage()">
                       Download
                     </a>
                     <form action="{{ url_for('delete_file', report_id=r.id) }}" method="post" class="d-inline"

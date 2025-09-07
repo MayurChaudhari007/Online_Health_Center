@@ -1,7 +1,16 @@
 {% extends "base.html"%} {% block title%} Contact {% endblock %} {% block
 extra_css %}
 <link rel="stylesheet" href="../static/css/contact.css">
-{%endblock %} {% block content%}
+{%endblock %}
+
+{% block favicon %}
+<link rel="icon" type="image/png" href="../static/img/favicon/contact/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="../static/img/favicon/contact/favicon.svg" />
+<link rel="shortcut icon" href="../static/img/favicon/contact/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="../static/img/favicon/contact/apple-touch-icon.png" />
+<link rel="manifest" href="../static/img/favicon/contact/site.webmanifest" />
+{% endblock favicon %}
+{% block content%}
 <section id="contact" class="contact py-5">
   <div class="container" data-aos="fade-up">
     <!-- Section Title -->
