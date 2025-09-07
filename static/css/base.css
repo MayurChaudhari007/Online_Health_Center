@@ -1,0 +1,74 @@
+body {
+  background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
+  font-family: "Segoe UI", sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-top: 70px;
+}
+
+/* Navbar */
+.navbar-nav .nav-link {
+  font-size: 1rem;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffeb3b !important;
+  box-shadow: 0 0 8px rgba(255, 235, 59, 0.7);
+  transform: translateY(-2px);
+}
+
+.navbar-nav .nav-link.active {
+  color: #fff !important;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.2);
+  border-bottom: 2px solid #ffeb3b;
+  box-shadow: 0 0 10px rgba(255, 235, 59, 0.7);
+}
+
+/* Floating Medical Icons */
+.floating-icon {
+  position: absolute;
+  opacity: 0.15;
+  animation: float 15s infinite ease-in-out;
+  pointer-events: none;
+  max-width: 80px;
+}
+
+.icon1 {
+  top: 12%;
+  left: 4%;
+  width: 80px;
+}
+.icon2 {
+  top: 55%;
+  left: 78%;
+  width: 100px;
+}
+.icon3 {
+  top: 85%;
+  left: 18%;
+  width: 70px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(8deg); }
+}
+
+/* Responsive Fixes */
+@media (max-width: 992px) {
+  .navbar-nav {
+    margin-top: 12px;
+  }
+  .navbar-nav .nav-link {
+    display: block;
+    margin: 5px 0;
+  }
+  .floating-icon {
+    display: none; /* hide floating icons on small screens */
+  }
+}

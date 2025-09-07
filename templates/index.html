@@ -1,0 +1,89 @@
+{% extends 'base1.html' %}
+{% block title %} Login In {% endblock %}
+{% block content %}
+<!-- Background with gradient & bubbles -->
+<style>
+  /* Background Gradient */
+  body {
+    background-image: linear-gradient(to right, #eea2a2 0%, #bbc1bf 19%, #57c6e1 42%, #b49fda 79%, #7ac5d8 100%);
+    overflow: hidden;
+    position: relative;
+    font-family: 'Poppins', sans-serif;
+  }
+</style>
+
+
+
+<!-- Medical Tagline -->
+
+
+<!-- Login Card -->
+<div class="d-flex justify-content-center align-items-center vh-100 px-3">
+  <div class="card shadow-lg auth-card bg-white">
+    <div class="text-center mb-4">
+      <img src="https://img.icons8.com/color/96/000000/heart-with-pulse.png" alt="logo"
+        class="mb-3 img-fluid animate__pulse" style="max-height: 80px;" />
+      <h2 class="fw-bold text-primary">AI Disease Prediction</h2>
+      <p class="text-muted small">Login to explore smart health insights</p>
+    </div>
+
+    <form method="post" action="{{ url_for('login') }}">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Username</label>
+        <input type="text" name="username" class="form-control rounded-pill" placeholder="Enter username" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Password</label>
+        <div class="input-group">
+          <input type="password" id="password" name="password" class="form-control rounded-start-pill"
+            placeholder="Enter password" required>
+          <button type="button" class="btn btn-outline-secondary rounded-end-pill" id="togglePassword">
+            <i class="bi bi-eye-slash" id="toggleIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="d-grid gap-2 mt-4">
+        <button type="submit" class="btn btn-primary rounded-pill">
+          <i class="bi bi-box-arrow-in-right"></i> Login
+        </button>
+        <div class="text-center mt-3">
+          <small class="text-muted">Don’t have an account?
+            <a href="{{ url_for('register') }}" class="text-primary fw-semibold">Register</a>
+          </small>
+        </div>
+      </div>
+    </form>
+
+    {% if error %}
+    <div class="alert alert-danger mt-3 text-center rounded-pill py-2">
+      {{ error }}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+
+
+<!-- JS for password toggle -->
+
+<script>
+  // Array of rotating health quotes
+
+</script>
+
+<script>
+  document.getElementById("togglePassword").addEventListener("click", function () {
+    const input = document.getElementById("password");
+    const icon = document.getElementById("toggleIcon");
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.replace("bi-eye-slash", "bi-eye");
+    } else {
+      input.type = "password";
+      icon.classList.replace("bi-eye", "bi-eye-slash");
+    }
+  });
+</script>
+{% endblock %}
