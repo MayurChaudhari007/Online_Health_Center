@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
       scrolled = false;
     }
 
-    
     // setTimeout(() => {
     //   const nearReport = window.scrollY > report.offsetTop - window.innerHeight;
     //   if (!nearReport) {
@@ -28,78 +27,24 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-
-
-
 const patientNameElement = document.getElementById("pename");
-let patientName = patientNameElement ? patientNameElement.textContent.trim() : "Patient";
-
-
+let patientName = patientNameElement
+  ? patientNameElement.textContent.trim()
+  : "Patient";
 
 document.getElementById("myForm").addEventListener("submit", function () {
   const btn = document.getElementById("predictBtn");
   const loading = document.getElementById("loading");
-  
+
   btn.disabled = true;
   loading.style.display = "block";
 });
 
-//   / / / / / / / / / / / / / / / / // / / / / / / / / / / / / / / / / / / /  //  / /  / 
-
-
-// document.getElementById("myForm").addEventListener("submit", async function (e) {
-//   e.preventDefault();
-
-//   const btn = document.getElementById("predictBtn");
-//   const loading = document.getElementById("loading");
-//   const errorBox = document.getElementById("errorBox");
-//   const resultBox = document.getElementById("resultBox");
-
-//   btn.disabled = true;
-//   loading.style.display = "block";
-//   errorBox.textContent = "";
-//   resultBox.innerHTML = "";
-
-//   try {
-//     const formData = new FormData(this);
-//     const response = await fetch("/ai_predict", {
-//       method: "POST",
-//       body: formData
-//     });
-
-//     const data = await response.json();
-
-//     if (!response.ok) {
-//       throw new Error(data.error || "Unknown error");
-//     }
-
-//     // ✅ Render result dynamically
-//     resultBox.innerHTML = `
-//       <div class="card p-3 shadow-sm">
-//         <h4>🩺 AI Medical Report</h4>
-//         <p><strong>Generated:</strong> ${data.report_time}</p>
-//         <p><strong>Patient:</strong> ${data.result.patient_name || "N/A"}</p>
-//         <p><strong>Predicted Disease:</strong> ${data.result.predicted_disease || "N/A"}</p>
-//       </div>
-//     `;
-
-//   } catch (err) {
-//     errorBox.textContent = err.message || "⚠️ Failed to get prediction.";
-//   } finally {
-//     btn.disabled = false;
-//     loading.style.display = "none";
-//   }
-// });
-
-
-
-// console.log(patientName);
-
+//   / / / / / / / / / / / / / / / / // / / / / / / / / / / / / / / / / / / /  //  / /  /
 
 document.addEventListener("DOMContentLoaded", function () {
   const pdfBtn = document.getElementById("downloadPDF");
-  
-  
+
   if (pdfBtn) {
     pdfBtn.addEventListener("click", function () {
       const reportElement = document.getElementById("report");
@@ -122,4 +67,13 @@ document.addEventListener("DOMContentLoaded", function () {
       html2pdf().set(opt).from(reportElement).save();
     });
   }
+});
+
+document.getElementById("downloadPDF").addEventListener("click", function () {
+  // Wait 3 seconds before showing toast
+  setTimeout(function () {
+    var toastEl = document.getElementById("downloadToast");
+    var toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  }, 3000);
 });

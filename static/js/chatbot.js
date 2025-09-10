@@ -31,24 +31,7 @@ input.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-//      auto scroll after clear chat ///////////
 
-// document.addEventListener("DOMContentLoaded", function () {
-//   // Check if URL contains ?cleared=1
-//   if (window.location.search.includes("cleared=1")) {
-//     const toastEl = document.getElementById("chatToast");
-//     if (toastEl) {
-//       const toast = new bootstrap.Toast(toastEl);
-//       toast.show();
-//     }
-
-//     // Scroll down to chat section
-//     const chatSection = document.getElementById("chat-section");
-//     if (chatSection) {
-//       chatSection.scrollIntoView({ behavior: "smooth" });
-//     }
-//   }
-// });
 
 document.addEventListener("DOMContentLoaded", function () {
   const storage = document.getElementById("storage_container");
@@ -58,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const toastBody = document.getElementById("toastMessage");
     if (toastEl && toastBody) {
       toastBody.innerText = "Chat is cleared!";
-      const toast = new bootstrap.Toast(toastEl, { delay: 3000 }); // auto-hide in 3s
+      const toast = new bootstrap.Toast(toastEl, { delay: 3000 }); 
       toast.show();
     }
 

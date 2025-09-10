@@ -48,9 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-
-
-// / / / / /                  auto scroll                     / / / / / / 
+// / / / / /                  auto scroll                     / / / / / /
 document.addEventListener("DOMContentLoaded", function () {
   const storage = document.getElementById("storage_container");
 
@@ -66,4 +64,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-
+document.getElementById("downloadPDF").addEventListener("click", function () {
+  
+  setTimeout(function () {
+    var toastEl = document.getElementById("downloadToast");
+    var toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  }, 3000);
+});

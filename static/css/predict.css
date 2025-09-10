@@ -153,18 +153,6 @@ table td {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 /* Download report new change */
 
 #pdfBtn {
@@ -322,6 +310,18 @@ table td {
   box-shadow: 0 6px 14px rgba(0, 87, 217, 0.12);
 }
 
+.ai-disclaimer {
+  margin-top: 25px;
+  padding: 15px;
+  font-size: 0.95em;
+  border-radius: 8px;
+  background: #fff4f4;
+  border: 1px solid #f5bcbc;
+  color: #b30000;
+  font-weight: bold;
+  text-align: center;
+}
+
 
 
 /*  new responsive add */
@@ -371,6 +371,11 @@ table td {
     padding: 10px 12px;
   }
 
+  .ai-disclaimer {
+    font-size: 0.85em;
+    padding: 10px;
+  }
+
   /* Form group adjustments */
   .form-group {
     padding: 15px;
@@ -401,7 +406,7 @@ table td {
   }
 
   /* Buttons full width */
-  button,
+  
   #pdfBtn {
     width: 100%;
     max-width: 250px;
@@ -414,44 +419,9 @@ table td {
   }
 }
 
-/* Keep navbar fixed and make the collapse overlay instead of pushing content */
-nav.navbar {
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 2000; /* above everything */
-}
 
-/* ensure page content doesn't hide under navbar */
 body {
-  padding-top: 72px; /* adjust if your navbar height differs */
+  padding-top: 72px; 
 }
 
-/* On small screens make collapse menu overlay and not push content */
-@media (max-width: 991px) {
-  .navbar-collapse {
-    position: absolute;
-    top: 100%; /* right below the navbar */
-    left: 0;
-    right: 0;
-    background: linear-gradient(90deg, #1976d2, #42a5f5); /* keep same look as navbar */
-    padding: 12px 0;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    border-radius: 0 0 12px 12px;
-  }
 
-  /* ensure collapse children align center */
-  .navbar-collapse .navbar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 6px 16px;
-  }
-
-  /* keep user info area inline inside collapse on mobile */
-  .navbar-collapse .d-flex {
-    justify-content: center;
-    margin-top: 8px;
-  }
-}

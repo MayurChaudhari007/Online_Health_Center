@@ -1,8 +1,4 @@
-/* =========================
-   ABOUT PAGE STYLES
-   ========================= */
 
-  /* Base Styles */
   .about h2 {
     color: #007b5e;
   }
@@ -15,17 +11,17 @@
     margin-bottom: 8px;
   }
 
-  /* =========================
+  /* 
    MOBILE RESPONSIVE FIXES
-   ========================= */
+    */
   @media screen and (max-width: 991px) {
 
-    /* Ensure stacked layout on smaller screens */
+    
     .about .row {
       flex-direction: column;
     }
 
-    /* Images Section */
+    
     .about .col-lg-5 {
       display: flex;
       flex-wrap: wrap;
@@ -40,7 +36,7 @@
       height: auto;
     }
 
-    /* Text Section */
+   
     .about .col-lg-7 {
       padding-top: 0 !important;
     }
@@ -48,13 +44,13 @@
 
   @media screen and (max-width: 576px) {
 
-    /* Images single column */
+    
     .about .col-lg-5 img {
       width: 100%;
       max-width: 100%;
     }
 
-    /* Headings and text */
+   
     .about h2 {
       font-size: 1.4rem;
     }

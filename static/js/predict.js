@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
       scrolled = false;
     }
 
-    
     // setTimeout(() => {
     //   const nearReport = window.scrollY > report.offsetTop - window.innerHeight;
     //   if (!nearReport) {
@@ -52,4 +51,13 @@ document.addEventListener("DOMContentLoaded", function () {
       html2pdf().set(opt).from(element).save();
     });
   }
+});
+
+document.getElementById("pdfBtn").addEventListener("click", function () {
+  
+  setTimeout(function () {
+    var toastEl = document.getElementById("downloadToast");
+    var toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  }, 3000);
 });

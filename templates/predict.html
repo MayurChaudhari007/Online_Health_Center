@@ -65,7 +65,7 @@ extra_css %}
 
   <!-- How It Works -->
   <div class="steps">
-    <h2>How It Works</h2>
+    <h2>⚙️ How It Works</h2>
     <div class="step-list">
       <div class="step">
         <span>1️⃣</span>
@@ -92,6 +92,10 @@ extra_css %}
       <li>🛌 Get 7–8 hours of quality sleep</li>
       <li>😌 Reduce stress through meditation or yoga</li>
     </ul>
+  </div>
+  <div class="ai-disclaimer">
+    ⚠ <strong>Disclaimer:</strong> This tool provides predictions for
+    educational purposes only. Always consult a doctor for medical advice.
   </div>
 </div>
 
@@ -258,6 +262,25 @@ extra_css %}
   </div>
 </div>
 <button type="button" id="pdfBtn">🖨️ Download PDF</button>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="downloadToast" 
+       class="toast align-items-center text-bg-success border-0" 
+       role="alert" 
+       aria-live="assertive" 
+       aria-atomic="true" 
+       data-bs-autohide="true" 
+       data-bs-delay="3000"> <!-- auto close after 3 sec -->
+    <div class="d-flex">
+      <div class="toast-body">
+        📂 Report downloaded successfully!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
 <script>
   
 </script>

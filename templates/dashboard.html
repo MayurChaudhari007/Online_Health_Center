@@ -105,7 +105,7 @@
                   <td>{{ r.size|filesize }}</td>
                   <td class="text-end">
                     <a class="btn btn-sm btn-outline-primary rounded-pill"
-                      href="{{ url_for('download', report_id=r.id) }}" onclick="showDownloadMessage()">
+                      href="{{ url_for('download', report_id=r.id) }}"  id="downloadPDF">
                       Download
                     </a>
                     <form action="{{ url_for('delete_file', report_id=r.id) }}" method="post" class="d-inline"
@@ -131,13 +131,22 @@
   </div>
 </div>
 
-<script>
-  function showDownloadMessage() {
-    setTimeout(() => {
-      alert("File downloaded successfully!");
-    }, 2000); // wait a bit so it feels like 'after' download
-  }
-</script>
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="downloadToast" 
+       class="toast align-items-center text-bg-success border-0" 
+       role="alert" 
+       aria-live="assertive" 
+       aria-atomic="true" 
+       data-bs-autohide="true" 
+       data-bs-delay="3000"> <!-- auto close after 3 sec -->
+    <div class="d-flex">
+      <div class="toast-body">
+        📂 File downloaded successfully!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
 <script src="{{ url_for('static', filename='js/storage.js') }}"></script>
 
 
