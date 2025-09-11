@@ -369,7 +369,10 @@ app.secret_key = "your_secret_key"
 # ---------------------------
 # SQLAlchemy Config
 # ---------------------------
+
+
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 ## # Render Database Add
 # app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
