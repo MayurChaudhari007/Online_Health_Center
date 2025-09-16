@@ -92,7 +92,7 @@ extra_css %}
 {% endif %}
 {% endwith %}
 
-<div class="chat-wrapper">
+<div class="chat-wrapper" data-user-id="{{ user.id }}">
   <div class="chat-header">
     🩺 AI Doctor Chatbot
     <a href="{{ url_for('clear_chat') }}?cleared=1" class="btn btn-danger"
@@ -109,11 +109,27 @@ extra_css %}
     {% endfor %}
   </div>
 
+  <!-- 🌐 Language selector -->
+  <div class="lang-select mb-2 px-2">
+    <label for="language">🌐 Language:</label>
+    <select id="language">
+      <option value="en-US">English</option>
+      <option value="hi-IN">Hindi</option>
+      <option value="mr-IN">Marathi</option>
+    </select>
+    <!-- show which voice is selected / fallback info -->
+    <span id="voice-info" class="ms-3 small text-muted"></span>
+  </div>
+
+  <!-- Chat input -->
   <div class="chat-input">
     <input id="user-input" type="text" placeholder="Type your message..." />
     <button id="send-btn">➤</button>
+    <button id="mic-btn">🎙️</button>
+    <button id="tts-toggle">🔊 On</button>
   </div>
 </div>
+
 <!-- Toast container -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
   <div id="chatToast" class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true">
@@ -123,7 +139,6 @@ extra_css %}
     </div>
   </div>
 </div>
-
 
 <script>
 

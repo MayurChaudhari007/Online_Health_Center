@@ -68,12 +68,17 @@
             <li class="nav-item">
               <a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}" href="/contact">📞 Contact</a>
             </li>
+            <!-- <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'profile' %}active{% endif %}" href="{{ url_for('profile') }}">📞 Profile</a>
+            </li> -->
+            <!-- <li><a href="{{ url_for('profile') }}"><strong>{{ username }}</strong></a></li> -->
+
           </ul>
 
           <!-- Right Side: User Info -->
           <div class="d-flex align-items-center justify-content-center mt-3 mt-lg-0 ms-lg-3 gap-2">
             <span class="text-white small d-flex align-items-center gap-1">
-              👨‍💼 Hi, <strong>{{ username }}</strong>
+              👨‍💼 Hi, <a href="{{ url_for('profile') }}" style="text-decoration: none; color: antiquewhite;"><strong>{{ user.username }}</strong></a>
             </span>
             <a href="{{ url_for('logout') }}" class="btn btn-light btn-sm rounded-pill px-3 fw-semibold">
               Logout
