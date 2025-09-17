@@ -1,101 +1,110 @@
 /* =========================
    CONTACT PAGE STYLES
    ========================= */
+/* File: contact.css */
+
+/* =========================
+   CONTACT PAGE STYLES
+   ========================= */
+.contact .section-title h2 {
+  color: var(--ai-theme-color);
+  font-weight: bold;
+}
+
+.contact .section-title p {
+  color: var(--secondary-text);
+}
+
+/* --- UPDATED: Contact Info & Form Cards --- */
+.contact .info,
+.contact .form {
+  background: var(--card-bg); /* Use the standard theme card background */
+  border: 1px solid var(--card-border); /* Add a consistent border */
+}
+
+.contact .info {
+  border-left: 4px solid var(--ai-theme-color);
+}
+
+.contact .info p {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.contact .info h5 {
+  margin-top: 15px;
+}
+
+/* Social Links */
+.contact .social-links a {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.contact .social-links a:hover {
+  transform: scale(1.2);
+  color: var(--ai-theme-color) !important;
+}
+
+/* Feedback Form */
+.contact .form label {
+  font-weight: 500;
+  color: var(--primary-text);
+}
+
+.contact .form textarea {
+  resize: none;
+}
+
+/* =========================
+   RESPONSIVE FIXES
+   ========================= */
+@media screen and (max-width: 991px) {
+  /* Stack Info and Form vertically */
+  .contact .row {
+    flex-direction: column;
+  }
+
+  .contact .col-lg-5,
+  .contact .col-lg-7 {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  /* Section Title */
   .contact .section-title h2 {
-    color: #007b5e;
-    font-weight: bold;
+    font-size: 1.5rem;
   }
 
   .contact .section-title p {
-    color: #555;
-  }
-
-  /* Contact Info Box */
-  .contact .info {
-    background: #f9fdfb;
-    border-left: 4px solid #007b5e;
-  }
-
-  .contact .info p {
-    margin-bottom: 8px;
     font-size: 0.95rem;
   }
 
-  .contact .info h5 {
-    margin-top: 15px;
+  /* Info Card */
+  .contact .info {
+    padding: 15px;
   }
 
-  /* Social Links */
-  .contact .social-links a {
-    transition: transform 0.2s ease, color 0.2s ease;
+  .contact .info p {
+    font-size: 0.9rem;
   }
 
-  .contact .social-links a:hover {
-    transform: scale(1.2);
-    color: #007b5e !important;
+  /* Form */
+  .contact .form {
+    padding: 15px;
   }
 
-  /* Feedback Form */
   .contact .form label {
-    font-weight: 500;
+    font-size: 0.9rem;
   }
 
+  .contact .form input,
   .contact .form textarea {
-    resize: none;
+    font-size: 0.9rem;
   }
 
-  /* =========================
-   RESPONSIVE FIXES
-   ========================= */
-  @media screen and (max-width: 991px) {
-
-    /* Stack Info and Form vertically */
-    .contact .row {
-      flex-direction: column;
-    }
-
-    .contact .col-lg-5,
-    .contact .col-lg-7 {
-      width: 100%;
-      margin-bottom: 20px;
-    }
+  .contact .form button {
+    width: 100%;
   }
-
-  @media screen and (max-width: 576px) {
-
-    /* Section Title */
-    .contact .section-title h2 {
-      font-size: 1.5rem;
-    }
-
-    .contact .section-title p {
-      font-size: 0.95rem;
-    }
-
-    /* Info Card */
-    .contact .info {
-      padding: 15px;
-    }
-
-    .contact .info p {
-      font-size: 0.9rem;
-    }
-
-    /* Form */
-    .contact .form {
-      padding: 15px;
-    }
-
-    .contact .form label {
-      font-size: 0.9rem;
-    }
-
-    .contact .form input,
-    .contact .form textarea {
-      font-size: 0.9rem;
-    }
-
-    .contact .form button {
-      width: 100%;
-    }
-  }
+}

@@ -1,24 +1,24 @@
 .medical-report {
   max-width: 900px;
-  margin: auto;
-  margin-top: 50px;
-  background: #fff;
+  margin: 50px auto;
+  background: var(--card-bg); /* Use general card background */
   padding: 20px;
-  border: 2px solid #007b5e;
+  border: 2px solid var(--ai-theme-color);
   border-radius: 8px;
   font-family: "Segoe UI", Tahoma, sans-serif;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  color: var(--primary-text);
 }
 
 .report-header {
   text-align: center;
-  border-bottom: 2px solid #007b5e;
+  border-bottom: 2px solid var(--ai-theme-color);
   padding-bottom: 10px;
   margin-bottom: 15px;
 }
 
 .report-header h2 {
-  color: #007b5e;
+  color: var(--ai-theme-color);
 }
 
 .report-section {
@@ -26,12 +26,12 @@
 }
 
 .report-section h4 {
-  color: #007b5e;
+  color: var(--ai-theme-color);
   margin-bottom: 5px;
 }
 
 .alert-section h4 {
-  color: red;
+  color: var(--text-danger);
 }
 
 ul {
@@ -39,17 +39,17 @@ ul {
 }
 
 .report-footer {
-  border-top: 2px solid #007b5e;
+  border-top: 2px solid var(--ai-theme-color);
   padding-top: 10px;
   margin-top: 15px;
 }
 
 .disclaimer {
-  color: red;
+  color: var(--text-danger);
   font-size: 14px;
   font-weight: bold;
   text-align: center;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--border-color);
   padding-top: 10px;
 }
 
@@ -61,7 +61,7 @@ ul {
   max-width: 900px;
   margin: 40px auto;
   padding: 30px;
-  background: linear-gradient(135deg, #f5f7fa, #e4f0ff);
+  background: var(--ai-intro-bg);
   border-radius: 12px;
   box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.12);
   text-align: center;
@@ -71,17 +71,16 @@ ul {
 
 .ai-intro h1 {
   font-size: 2.4em;
-  color: #0057d9;
+  color: var(--info-heading);
   margin-bottom: 10px;
 }
 
 .ai-intro .tagline {
   font-size: 1.2em;
-  color: #333;
+  color: var(--primary-text);
   margin-bottom: 25px;
 }
 
-/* === Features Grid === */
 .ai-features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -90,28 +89,28 @@ ul {
 }
 
 .feature-card {
-  background: white;
+  background: var(--card-bg);
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid #dce6f7;
-  box-shadow: 0px 4px 12px rgba(0, 87, 217, 0.08);
+  border: 1px solid var(--ai-feature-card-border);
+  box-shadow: 0px 4px 12px var(--ai-feature-card-shadow);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .feature-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0px 8px 18px rgba(0, 87, 217, 0.15);
+  box-shadow: 0px 8px 18px var(--ai-feature-card-hover-shadow);
 }
 
 .feature-card h3 {
   font-size: 1.2em;
-  color: #0057d9;
+  color: var(--info-heading);
   margin-bottom: 8px;
 }
 
-/* How It Works Section */
+/* --- How It Works Section --- */
 .ai-steps {
-  background: #ffffff;
+  background: var(--card-bg);
   padding: 40px;
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
@@ -123,11 +122,7 @@ ul {
   text-align: center;
   font-size: 1.8rem;
   margin-bottom: 25px;
-  
-  
-  color: #0057d9;
-  
-
+  color: var(--info-heading);
 }
 
 .ai-steps ol {
@@ -142,10 +137,11 @@ ul {
   margin: 20px 0;
   padding: 20px 20px 20px 60px;
   border-radius: 12px;
-  background: #f9f9f9;
+  background: var(--ai-steps-list-item-bg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+  color: var(--primary-text);
 }
 
 .ai-steps ol li::before {
@@ -158,8 +154,8 @@ ul {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #4facfe;
-  color: #fff;
+  background: var(--ai-steps-counter-bg);
+  color: var(--ai-steps-counter-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,7 +164,7 @@ ul {
 }
 
 .ai-steps ol li strong {
-  color: #222;
+  color: var(--primary-text);
   font-size: 1.1rem;
 }
 
@@ -177,27 +173,27 @@ ul {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* === Disclaimer === */
+/* --- AI Disclaimer Section --- */
 .ai-disclaimer {
   margin-top: 25px;
   padding: 15px;
   font-size: 0.95em;
   border-radius: 8px;
-  background: #fff4f4;
-  border: 1px solid #f5bcbc;
-  color: #b30000;
+  background: var(--info-disclaimer-bg);
+  border: 1px solid var(--info-disclaimer-border);
+  color: var(--info-disclaimer-text);
   font-weight: bold;
   text-align: center;
 }
 
-/* === AI Tips Section === */
+/* --- AI Tips Section --- */
 .ai-tips {
   margin: 40px auto;
   padding: 25px;
   max-width: 800px;
-  background: linear-gradient(135deg, #eef6ff, #ffffff);
+  background: var(--ai-tips-bg);
   border-radius: 12px;
-  border: 1px solid #dbe7ff;
+  border: 1px solid var(--ai-tips-border);
   box-shadow: 0px 6px 16px rgba(0, 87, 217, 0.08);
   font-family: "Segoe UI", Tahoma, sans-serif;
 }
@@ -206,7 +202,7 @@ ul {
   text-align: center;
   font-size: 1.8em;
   margin-bottom: 18px;
-  color: #0057d9;
+  color: var(--info-heading);
 }
 
 .ai-tips ul {
@@ -216,23 +212,24 @@ ul {
 }
 
 .ai-tips li {
-  background: #ffffff;
+  background: var(--card-bg);
   margin: 10px 0;
   padding: 12px 18px;
   border-radius: 10px;
-  border: 1px solid #e0e9fa;
+  border: 1px solid var(--info-card-border);
   font-size: 1.05em;
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #333;
+  color: var(--primary-text);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .ai-tips li:hover {
   transform: translateX(8px);
-  box-shadow: 0px 6px 14px rgba(0, 87, 217, 0.12);
+  box-shadow: 0px 6px 14px var(--info-card-hover-shadow);
 }
+
 
 @keyframes fadeIn {
   from {
