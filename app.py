@@ -509,7 +509,7 @@ def login():
         if user and user.check_password(password):
             # ✅ FIX: Store the user's permanent ID in the session.
             session["user_id"] = user.id
-            flash("✅ Login successful!", "success")
+            flash(f"✅ Welcome, {username} Login successful!", "success")
             return redirect(url_for("home"))  # Or your desired page, e.g., 'profile'
         else:
             # flash("❌ Invalid username or password.", "danger")
