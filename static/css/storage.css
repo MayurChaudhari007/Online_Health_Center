@@ -109,8 +109,3 @@ thead {
   table.table .btn { font-size: 0.8rem; padding: 4px 8px; }
 }
 
-/* --- Note on Bootstrap Components --- */
-/* The upload form (.card) and reports list (.table, .table-light) are styled */
-/* by Bootstrap. They will automatically adapt to dark mode because our      */
-/* JavaScript toggles the 'data-bs-theme' attribute on the <html> tag.      */
-/* No extra CSS is needed for them to be theme-aware.

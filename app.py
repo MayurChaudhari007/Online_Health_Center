@@ -27,6 +27,8 @@ from werkzeug.exceptions import RequestEntityTooLarge
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc
+from sqlalchemy import func
 
 #
 # from google import genai as ge
@@ -399,11 +401,10 @@ db = SQLAlchemy(app)
 # File Upload Config
 # ---------------------------
 # Files will be stored in: <your project> / instance / uploads / <user_id> / <file>
-# app.config["UPLOAD_FOLDER"] = os.path.join(app.instance_path, "uploads")
-# app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024  # 2 MB max per file
+
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "doc", "docx"}
 
-# os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
 
 
 def allowed_file(filename: str) -> bool:
@@ -429,7 +430,7 @@ class User(db.Model):
     username = db.Column(db.String(350), unique=True, nullable=False)
     password_hash = db.Column(db.String(350), nullable=False)
 
-    # This is perfect! The cascade will handle automatic deletion.
+    
     chats = db.relationship("Chat", backref="user", cascade="all, delete-orphan")
     reports = db.relationship(
         "MedicalReport", backref="user", cascade="all, delete-orphan"
@@ -444,15 +445,15 @@ class User(db.Model):
 
 class Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # This is the only link you need to the user.
+    
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    # ❌ REMOVED: username = db.Column(db.String(400))
+    
     sender = db.Column(db.String(400))  # "user" / "bot"
     message = db.Column(db.Text)
 
 
 class MedicalReport(db.Model):
-    # This model is already correct, no changes needed.
+    
     id = db.Column(db.Integer, primary_key=True)
     original_name = db.Column(db.String(260), nullable=False)
     mimetype = db.Column(db.String(100))
@@ -461,7 +462,15 @@ class MedicalReport(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     data = db.Column(db.LargeBinary, nullable=False)
 
-
+# --- ADD THIS NEW CLASS AT THE END ---
+class BlogPost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    author_name = db.Column(db.String(100), nullable=False, default="Admin")
+    created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    image_url = db.Column(db.String(500), nullable=True)
+    youtube_url = db.Column(db.String(500), nullable=True)
 # # # # ## # #
 
 with app.app_context():
@@ -489,8 +498,7 @@ def filesize(num):
 
 @app.route("/")
 def home1():
-    # if "username" in session:
-    #     return redirect(url_for("home"))
+
     return render_template("index.html")
 
 
@@ -507,13 +515,12 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(password):
-            # ✅ FIX: Store the user's permanent ID in the session.
+           
             session["user_id"] = user.id
             flash(f"✅ Welcome, {username} Login successful!", "success")
             return redirect(url_for("home"))  # Or your desired page, e.g., 'profile'
         else:
-            # flash("❌ Invalid username or password.", "danger")
-            # return redirect(url_for("login")) # Redirect back to the login page
+            
             return render_template("index.html", error="Invalid username or password.")
 
     # For a GET request, just show the login page
@@ -537,13 +544,11 @@ def register():
         confirm_password = request.form.get("confirm_password")
 
         if User.query.filter_by(username=username).first():
-            # flash("❌ Username already exists!", "danger")
-            # return redirect(url_for("register"))
+            
             return render_template("register.html", error="User already exists!")
 
         if password != confirm_password:
-            # flash("❌ Passwords do not match!", "danger")
-            # return redirect(url_for("register"))
+            
             return render_template("register.html", error="Passwords do not match!")
 
         # Create the new user
@@ -552,15 +557,15 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        # ✅ FIX: Log the new user in by storing their new ID in the session.
+        
         session["user_id"] = new_user.id
         flash(
             f"✅ Welcome, {new_user.username}! Your account has been created.",
             "success",
         )
-        return redirect(url_for("home"))  # Or your desired page
+        return redirect(url_for("home"))  
 
-    # For a GET request, just show the registration page
+    
     return render_template("register.html")
 
 
@@ -580,29 +585,29 @@ def register():
 
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
-    # ✅ FIX: Check for 'user_id' in session.
+    
     if "user_id" not in session:
         flash("⚠️ Please login first.", "danger")
         return redirect(url_for("login"))
 
-    # ✅ FIX: Get the user by their primary key (ID). This is faster and more reliable.
+    
     user = User.query.get(session["user_id"])
     if not user:
-        # If user was deleted but session still exists, clear session
+        
         session.clear()
         return redirect(url_for("login"))
 
     if request.method == "POST":
         new_username = request.form.get("username")
-        # The rest of your update logic is fine, but we no longer need to update the session!
+        
         if new_username and new_username != user.username:
             if User.query.filter_by(username=new_username).first():
                 flash("❌ Username already taken!", "danger")
                 return redirect(url_for("profile"))
             user.username = new_username
-            # ❌ REMOVED: session["username"] = new_username
+            
 
-        # (Password change logic is unchanged and correct)
+        
         # ...
         old_password = request.form.get("old_password")
         new_password = request.form.get("new_password")
@@ -627,25 +632,21 @@ def profile():
 # # # # # # # # # # # # Delete account function and route
 @app.route("/delete_account", methods=["POST"])
 def delete_account():
-    # ✅ FIX: Use 'user_id' from session.
+    
     if "user_id" not in session:
         return redirect(url_for("login"))
 
     user = User.query.get(session["user_id"])
 
     if user:
-        # ✅ FIX: The cascade="all, delete-orphan" in your User model handles everything!
-        # These lines are no longer needed. The ORM does it for you.
-        # MedicalReport.query.filter_by(user_id=user.id).delete()
-        # Chat.query.filter_by(user_id=user.id).delete()
+        
 
         db.session.delete(
             user
-        )  # This one line will delete the user, their chats, and their reports.
+        )  
         db.session.commit()
 
-        session.clear()  # Log user out completely
-        # flash("🗑️ Your account and all data have been deleted successfully.", "success")
+        session.clear()  
         return redirect(url_for("register"))
 
     flash("❌ Something went wrong!", "danger")
@@ -662,7 +663,7 @@ def delete_account():
 
 @app.route("/dashboard")
 def dashboard():
-    # ✅ FIX: Use 'user_id' from session
+    
     if "user_id" not in session:
         return redirect(url_for("home1"))
 
@@ -680,9 +681,7 @@ def dashboard():
     return render_template("dashboard.html", user=user, reports=reports)
 
 
-# All other report routes (upload, download, delete) should also be changed to get the user via:
-# user = User.query.get(session["user_id"])
-# The rest of your logic inside those functions is correct because it already uses user.id.
+
 
 #######################---------------------------
 
@@ -695,12 +694,12 @@ def dashboard():
 # --- UPLOAD ROUTE (Corrected) ---
 @app.route("/upload", methods=["POST"])
 def upload():
-    # ✅ FIX: Check for 'user_id' in the session.
+    
     if "user_id" not in session:
         flash("⚠️ Please login to upload files.", "danger")
         return redirect(url_for("login"))
 
-    # ... (file checking logic is correct and unchanged) ...
+    
     if "report" not in request.files:
         flash("No file part in the form.", "warning")
         return redirect(url_for("dashboard"))
@@ -712,7 +711,7 @@ def upload():
         flash("File type not allowed.", "danger")
         return redirect(url_for("dashboard"))
 
-    # ✅ FIX: Get the user by their primary key (ID).
+    
     user = User.query.get(session["user_id"])
     if not user:
         session.clear()
@@ -723,7 +722,7 @@ def upload():
     data = file.read()
     size = len(data)
 
-    # This part was already correct because it uses user.id
+    
     report = MedicalReport(
         original_name=safe_name,
         mimetype=file.mimetype,
@@ -741,15 +740,15 @@ def upload():
 ##############################  new report download-----------------------------------
 
 
-# --- DOWNLOAD ROUTE (Corrected) ---
+
 @app.route("/files/<int:report_id>")
 def download(report_id):
-    # ✅ FIX: Check for 'user_id' in the session.
+    
     if "user_id" not in session:
         flash("⚠️ Please login to download files.", "danger")
         return redirect(url_for("login"))
 
-    # ✅ FIX: Get the user by their primary key (ID).
+    
     user = User.query.get(session["user_id"])
     if not user:
         session.clear()
@@ -757,9 +756,9 @@ def download(report_id):
 
     report = MedicalReport.query.get_or_404(report_id)
 
-    # This authorization check was already correct
+    
     if report.user_id != user.id:
-        abort(403)  # Access Forbidden
+        abort(403)  
 
     return send_file(
         io.BytesIO(report.data),
@@ -772,15 +771,15 @@ def download(report_id):
 ################################## new delete report code --------------------------
 
 
-# --- DELETE FILE ROUTE (Corrected) ---
+
 @app.route("/files/<int:report_id>/delete", methods=["POST"])
 def delete_file(report_id):
-    # ✅ FIX: Check for 'user_id' in the session.
+    
     if "user_id" not in session:
         flash("⚠️ Please login to delete files.", "danger")
         return redirect(url_for("login"))
 
-    # ✅ FIX: Get the user by their primary key (ID).
+    
     user = User.query.get(session["user_id"])
     if not user:
         session.clear()
@@ -788,7 +787,7 @@ def delete_file(report_id):
 
     report = MedicalReport.query.get_or_404(report_id)
 
-    # This authorization check was already correct
+   
     if report.user_id != user.id:
         abort(403)
 
@@ -835,23 +834,23 @@ def home():
 
 
 
-@app.route("/predict", methods=["GET", "POST"])  # Assuming the route is /predict
+@app.route("/predict", methods=["GET", "POST"])  
 def form():
-    # ✅ FIX: Check if user is logged in using 'user_id'
+    
     if "user_id" not in session:
         flash("⚠️ Please login to get a prediction.", "danger")
         return redirect(url_for("login"))
 
-    # ✅ FIX: Get the user by their permanent ID
+    
     user = User.query.get(session["user_id"])
 
-    # ✅ FIX: Handle case where user was deleted but session exists
+    
     if not user:
         session.clear()
         flash("Your session has expired. Please log in again.", "warning")
         return redirect(url_for("login"))
 
-    # --- POST request logic (when the form is submitted) ---
+    
     if request.method == "POST":
         name = request.form.get("patient_name")
         age = request.form.get("patient_age")
@@ -864,10 +863,10 @@ def form():
                 "predict.html",
                 message=message,
                 symptoms_list=list(symptoms_dict.keys()),
-                user=user,  # Pass the user object even on error
+                user=user,  
             )
 
-        # Predict disease
+       
         predicted_disease = get_predicted_value(symptoms)
         desc, pre, wrkout = helper(predicted_disease)
         medi2 = medi(predicted_disease)
@@ -888,13 +887,13 @@ def form():
             dis_diet=diet2,
             dis_wrk=wrkout,
             symptoms_list=list(symptoms_dict.keys()),
-            user=user,  # ✅ FIX: Pass the entire user object
+            user=user,  
         )
 
-    # --- GET request logic (when the page is first loaded) ---
+    
     return render_template(
         "predict.html",
-        user=user,  # ✅ FIX: Pass the entire user object
+        user=user,  
         symptoms_list=list(symptoms_dict.keys()),
     )
 
@@ -906,15 +905,15 @@ def form():
 
 @app.route("/ai_predict", methods=["GET", "POST"])
 def ai_predict():
-    # ✅ FIX: Check for 'user_id' in the session to ensure the user is logged in.
+    
     if "user_id" not in session:
         flash("⚠️ Please login to use the AI prediction service.", "danger")
         return redirect(url_for("login"))
 
-    # ✅ FIX: Get the user by their permanent ID.
+    
     user = User.query.get(session["user_id"])
 
-    # ✅ FIX: Handle cases where the session is invalid or the user was deleted.
+    
     if not user:
         session.clear()
         flash("Your session has expired. Please log in again.", "warning")
@@ -929,7 +928,7 @@ def ai_predict():
         user_prompt = f"Name: {name}, Age: {age}, Gender: {gender}, Symptoms: {symptoms}"
 
         try:
-            # (Your AI prediction logic is good and remains unchanged)
+            
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future = executor.submit(model.generate_content, user_prompt)
                 response = future.result(timeout=10)
@@ -960,79 +959,24 @@ def ai_predict():
 
         return render_template(
             "ai_predict.html",
-            user=user,  # ✅ FIX: Pass the entire user object to the template.
+            user=user,  
             result=result,
             report_time=report_time,
         )
 
-    # This is for the GET request (when the page is first loaded)
+    
     return render_template("ai_predict.html", user=user, prediction=None)
 
 ##########################################################################################
 ######################     Chat Bot       #######################################
 
 
-#  Chatbot page
-# @app.route("/chatbot")
-# def chatbot_page():
-#     if "username" not in session:
-#         return redirect(url_for("login"))
-
-#     user = session["username"]
-#     history = Chat.query.filter_by(username=user).all()
-#     return render_template("chatbot.html", username=user, history=history)
-
-
-# # Get response route
-# @app.route("/get_response", methods=["POST"])
-# def get_response():
-#     if "username" not in session:
-#         return jsonify({"reply": "⚠️ Please login first."})
-
-#     data = request.get_json()
-#     user_message = data.get("message")
-#     lang = data.get("lang", "en-US")  # 🌐 get language from frontend
-
-#     # Save user message
-#     chat_entry = Chat(username=session["username"], sender="user", message=user_message)
-#     db.session.add(chat_entry)
-#     db.session.commit()
-
-#     # 🔹 Adjust user message for multilingual reply
-#     if lang == "hi-IN":
-#         user_message = f"Reply in Hindi: {user_message}"
-#     elif lang == "mr-IN":
-#         user_message = f"Reply in Marathi: {user_message}"
-
-#     # Generate bot reply
-#     response = chat.send_message(user_message)
-#     bot_reply = response.text
-
-#     # Save bot reply
-#     bot_entry = Chat(username=session["username"], sender="bot", message=bot_reply)
-#     db.session.add(bot_entry)
-#     db.session.commit()
-
-#     return jsonify({"reply": bot_reply})
-
-
-# # Clear chat
-# @app.route("/clear_chat")
-# def clear_chat():
-#     user = User.query.filter_by(username=session["username"]).first()
-#     if "username" in session:
-#         # Chat.query.filter_by(username=session["username"]).delete()
-#         Chat.query.filter_by(user_id=user.id).delete()
-#         db.session.commit()
-#         flash("Chat is cleared. Scroll down to start fresh.", "success")
-#     return redirect(url_for("chatbot_page"))
-
 ################################## new chat functions ---------------------------------
 
 
 @app.route("/chatbot")
 def chatbot_page():
-    # ✅ FIX: Use 'user_id' from session.
+    
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -1041,10 +985,10 @@ def chatbot_page():
         session.clear()
         return redirect(url_for("login"))
 
-    # ✅ FIX: Query chat history by the user's ID.
+    
     history = Chat.query.filter_by(user_id=user.id).all()
 
-    # Pass the actual user object to the template
+    
     return render_template(
         "chatbot.html", user=user, history=history
     )
@@ -1052,20 +996,18 @@ def chatbot_page():
 
 @app.route("/get_response", methods=["POST"])
 def get_response():
-    # ✅ FIX: Check for 'user_id'
+    
     if "user_id" not in session:
         return jsonify({"reply": "⚠️ Please login first."})
 
     data = request.get_json()
     user_message = data.get("message")
 
-    # ... (language logic) ...
-
-    # Generate bot reply
+    
     response = chat.send_message(user_message)
     bot_reply = response.text
 
-    # ✅ FIX: Create chat entries using the correct user_id. This solves your storage error.
+    
     user_chat_entry = Chat(
         user_id=session["user_id"], sender="user", message=user_message
     )
@@ -1081,7 +1023,7 @@ def get_response():
 @app.route("/clear_chat")
 def clear_chat():
     if "user_id" in session:
-        # This logic was already correct, just confirming it.
+        
         Chat.query.filter_by(user_id=session["user_id"]).delete()
         db.session.commit()
         flash("Chat is cleared. Scroll down to start fresh.", "success")
@@ -1092,31 +1034,52 @@ def clear_chat():
 
 
 ##########################################################################################
-@app.route("/tutor")
-def tutor():
-    return render_template("tutor.html")
+# @app.route('/blog')
+# def blog_index():
+#     user = User.query.get(session["user_id"])
+#     """Displays the main blog page with a list of all posts."""
+#     # Fetch all posts from the database, ordering by the newest ones first
+#     posts = BlogPost.query.order_by(desc(BlogPost.created_at)).all()
+#     return render_template('blog_index.html', posts=posts, user=user)
 
+# @app.route('/blog/post/<int:post_id>')
+# def blog_post(post_id):
+#     user = User.query.get(session["user_id"])
+#     """Displays a single, detailed blog post."""
+#     # Fetch the specific post by its ID, or show a 404 error if not found
+#     post = BlogPost.query.get_or_404(post_id)
+#     return render_template('blog_post.html', post=post, user=user)
 
-##########################################################################################
-# @app.route("/about")
-# def about():
-#     user = User.query.filter_by(username=session["username"]).first()
-#     return render_template("about.html", username=user.username)
+@app.route('/blog')
+def blog_index():
+    # Safely get the user if they are logged in
+    user = None
+    if "user_id" in session:
+        user = User.query.get(session["user_id"])
 
+    # Check if a specific post is being requested via a URL parameter
+    post_id = request.args.get('post_id', type=int)
 
-# ##########################################################################################
-# @app.route("/contact")
-# def contact():
-#     user = User.query.filter_by(username=session["username"]).first()
-#     return render_template("contact.html", username=user.username)
+    if post_id:
+        # --- SINGLE POST VIEW ---
+        # A post_id was provided, so fetch and display only that post
+        single_post = BlogPost.query.get_or_404(post_id)
+        # We pass the single post object as 'post'
+        return render_template('blog_index.html', post=single_post, user=user)
+    else:
+        # --- ALL POSTS VIEW ---
+        # No post_id, so display the list of all posts
+        all_posts = BlogPost.query.order_by(desc(BlogPost.created_at)).all()
+        # We pass the list of all posts as 'posts'
+        return render_template('blog_index.html', posts=all_posts, user=user)
 
 @app.route("/about")
 def about():
     user = None
-    # Check if a user is logged in by looking for user_id in the session
+    
     if "user_id" in session:
         user = User.query.get(session["user_id"])
-    # Pass the user object (which could be None) to the template
+    
     return render_template("about.html", user=user)
 
 # -----------------
@@ -1124,10 +1087,10 @@ def about():
 @app.route("/contact")
 def contact():
     user = None
-    # Check if a user is logged in by looking for user_id in the session
+    
     if "user_id" in session:
         user = User.query.get(session["user_id"])
-    # Pass the user object (which could be None) to the template
+    
     return render_template("contact.html", user=user)
 ##########################################################################################
 if __name__ == "__main__":

@@ -110,7 +110,6 @@ function speak(text) {
   let fallbackName = null;
 
   if (!voice) {
-    // try fallback order: Hindi -> English (India) -> any english -> first available
     const fallbackOrder = ["hi-IN", "en-IN", "en-US", "en-GB"];
     for (let fb of fallbackOrder) {
       voice = findVoiceForLang(fb);
@@ -125,7 +124,6 @@ function speak(text) {
 
   const utter = new SpeechSynthesisUtterance(text);
   if (voice) utter.voice = voice;
-  // set utterance.lang to match chosen voice if available, otherwise requestedLang
   utter.lang = (voice && voice.lang) ? voice.lang : requestedLang;
 
   speechSynthesis.speak(utter);
@@ -152,7 +150,6 @@ function appendMessage(type, text) {
 // ----------------- Send message to server -----------------
 
 
-//  / // / /  new send message function -----------------------
 
 function sendMessage() {
   const message = input.value.trim();
@@ -166,11 +163,11 @@ function sendMessage() {
   fetch("/get_response", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    // ✅ FIX: Add the user_id to the JSON body
+    
     body: JSON.stringify({
       message: message,
       lang: languageSelect.value,
-      user_id: userId, // <-- This is the crucial addition
+      user_id: userId, 
     }),
   })
     .then((res) => res.json())
@@ -228,7 +225,7 @@ if (SpeechRecognition) {
     }
   });
 } else {
-  // not supported
+  
   micBtn.disabled = true;
   micBtn.title = "Speech recognition not supported in this browser.";
 }

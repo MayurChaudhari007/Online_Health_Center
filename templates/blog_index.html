@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{# --- THIS IS THE CORRECTED TITLE BLOCK --- #}
+{% block title %}
+{% if post %}
+{{ post.title }}
+{% else %}
+Health & Wellness Blog
+{% endif %}
+{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="../static/css/blog_styles.css"> {%endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    {# --- SINGLE POST VIEW --- #}
+    {# This entire section only displays if a single 'post' object was passed from app.py #}
+    {% if post %}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="blog-post-view">
+                <a href="{{ url_for('blog_index') }}" class="btn btn-secondary">&larr; Back to Blog Index</a>
+                <h1 class="display-5 mb-3">{{ post.title }}</h1>
+                <p class="text-muted border-bottom pb-3 mb-4">
+                    Posted by <strong>{{ post.author_name }}</strong> on {{ post.created_at.strftime('%B %d, %Y') }}
+                </p>
+
+                {% if post.image_url %}
+                <img src="{{ post.image_url }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
+                {% endif %}
+
+                <div class="post-content">
+                    {{ post.content | safe }}
+                </div>
+
+                {% if post.youtube_url %}
+                <div class="youtube-embed-container my-4">
+                    <iframe src="{{ post.youtube_url }}" title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+                </div>
+                {% endif %}
+
+                <hr>
+                <a href="{{ url_for('blog_index') }}" class="btn btn-secondary">&larr; Back to Blog Index</a>
+            </div>
+        </div>
+    </div>
+
+    {# --- ALL POSTS VIEW --- #}
+    {# This section displays if a 'posts' list was passed instead #}
+    {% else %}
+    <div class="text-center mb-5">
+        <h1 class="display-4">Health & Wellness Blog</h1>
+        <p class="lead text-muted">Latest articles, research, and health tips from our team.</p>
+    </div>
+
+    <div class="row">
+        {% for post_item in posts %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card blog-card h-100">
+                {% if post_item.image_url %}
+                <img src="{{ post_item.image_url }}" class="card-img-top" alt="{{ post_item.title }}">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ post_item.title }}</h5>
+                    <p class="card-text text-muted small">
+                        By {{ post_item.author_name }} on {{ post_item.created_at.strftime('%B %d, %Y') }}
+                    </p>
+                    <p class="card-text">{{ post_item.content| striptags | truncate(120) }}</p>
+
+                    <a href="{{ url_for('blog_index', post_id=post_item.id) }}" class="btn btn-primary mt-auto">Read
+                        More</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <p class="text-center text-muted">No blog posts have been published yet. Check back soon!</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

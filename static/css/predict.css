@@ -12,7 +12,7 @@
   border-radius: 10px;
   border: 1px solid var(--report-border);
   box-shadow: 0 15px 15px var(--report-shadow);
-  color: var(--primary-text); /* Ensure text inside is readable */
+  color: var(--primary-text); 
 }
 
 .report-subtitle {
@@ -78,7 +78,7 @@ table td {
   border-top: 1px solid var(--border-color);
   padding-top: 10px;
 }
-/* --- Form Section --- */
+
 .form-group {
   max-width: 800px;
   margin: 30px auto;
@@ -163,17 +163,6 @@ table td {
   background-color: var(--button-secondary-hover-bg);
 }
 
-
-
-
-
-
-
-
-
-
-
-/*  add ml dis pred new */
 
 
 /* Container */
@@ -290,7 +279,6 @@ table td {
 }
 
 
-/*  new responsive add */
 
 /* =========================
    MOBILE RESPONSIVE FIXES

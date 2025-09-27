@@ -1,6 +1,6 @@
 /* File: base.css */
 body {
-  /* The background now uses variables for its gradient */
+  
   background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
   font-family: "Segoe UI", sans-serif;
   min-height: 100vh;

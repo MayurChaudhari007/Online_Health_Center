@@ -1,7 +1,7 @@
 .medical-report {
   max-width: 900px;
   margin: 50px auto;
-  background: var(--card-bg); /* Use general card background */
+  background: var(--card-bg); 
   padding: 20px;
   border: 2px solid var(--ai-theme-color);
   border-radius: 8px;

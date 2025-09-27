@@ -11,9 +11,6 @@ body {
   background-color: var(--card-bg); /* Use theme card background */
 }
 
-/* NOTE: Bootstrap's own dark mode handles the .form-control styles (bg, text color, etc) */
-/* We just need to handle the focus glow and addon styles. */
-
 .form-control:focus {
   box-shadow: 0 0 0 0.25rem var(--input-focus-shadow); /* Use theme focus glow */
 }
@@ -28,7 +25,7 @@ body {
 .input-group-text {
   background-color: var(--input-group-bg);
   border-right: 0;
-  border-color: var(--input-border); /* Sync border color */
+  border-color: var(--input-border); 
 }
 
 .form-control {
@@ -36,5 +33,5 @@ body {
 }
 
 .form-control:focus {
-  border-left: 1px solid var(--border-color); /* Re-add border on focus */
+  border-left: 1px solid var(--border-color); 
 }

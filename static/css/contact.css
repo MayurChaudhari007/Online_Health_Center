@@ -1,11 +1,4 @@
-/* =========================
-   CONTACT PAGE STYLES
-   ========================= */
-/* File: contact.css */
 
-/* =========================
-   CONTACT PAGE STYLES
-   ========================= */
 .contact .section-title h2 {
   color: var(--ai-theme-color);
   font-weight: bold;
@@ -15,11 +8,11 @@
   color: var(--secondary-text);
 }
 
-/* --- UPDATED: Contact Info & Form Cards --- */
+
 .contact .info,
 .contact .form {
-  background: var(--card-bg); /* Use the standard theme card background */
-  border: 1px solid var(--card-border); /* Add a consistent border */
+  background: var(--card-bg); 
+  border: 1px solid var(--card-border); 
 }
 
 .contact .info {
@@ -56,10 +49,10 @@
 }
 
 /* =========================
-   RESPONSIVE FIXES
+   RESPONSIVE 
    ========================= */
 @media screen and (max-width: 991px) {
-  /* Stack Info and Form vertically */
+  
   .contact .row {
     flex-direction: column;
   }
@@ -72,7 +65,7 @@
 }
 
 @media screen and (max-width: 576px) {
-  /* Section Title */
+  
   .contact .section-title h2 {
     font-size: 1.5rem;
   }
