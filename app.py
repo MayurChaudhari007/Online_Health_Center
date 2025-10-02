@@ -10,7 +10,10 @@ from flask import (
     abort,
     session,
     send_file,
+    g,
 )
+
+from functools import wraps
 
 # from yourapp import app, db
 import io
@@ -62,57 +65,112 @@ load_dotenv()
 
 ################ DATAsets ################
 
-sym_desk = pd.read_csv("Dataset/symtoms_df.csv")
-precautions = pd.read_csv("Dataset/precautions_df.csv")
-workout = pd.read_csv("Dataset/workout_df.csv")
-description = pd.read_csv("Dataset/description.csv")
-medications = pd.read_csv("Dataset/medications.csv")
-diets = pd.read_csv("Dataset/diets.csv")
-# Extra
-medications1 = pd.read_csv("Dataset/medications.csv")
-medications1["Medication"] = medications1["Medication"].apply(ast.literal_eval)
-diets1 = pd.read_csv("Dataset/diets.csv")
-diets1["Diet"] = diets1["Diet"].apply(ast.literal_eval)
+# sym_desk = pd.read_csv("Dataset/symtoms_df.csv")
+# precautions = pd.read_csv("Dataset/precautions_df.csv")
+# workout = pd.read_csv("Dataset/workout_df.csv")
+# description = pd.read_csv("Dataset/description.csv")
+# medications = pd.read_csv("Dataset/medications.csv")
+# diets = pd.read_csv("Dataset/diets.csv")
+# # Extra
+# medications1 = pd.read_csv("Dataset/medications.csv")
+# medications1["Medication"] = medications1["Medication"].apply(ast.literal_eval)
+# diets1 = pd.read_csv("Dataset/diets.csv")
+# diets1["Diet"] = diets1["Diet"].apply(ast.literal_eval)
 
+#####################  New Datasets  #######################
 
-#  load model
+# Load DataFrames once
+description_df = pd.read_csv("Dataset/description.csv")
+precautions_df = pd.read_csv("Dataset/precautions_df.csv")
+workout_df = pd.read_csv("Dataset/workout_df.csv")
+medications_df = pd.read_csv("Dataset/medications.csv")
+diets_df = pd.read_csv("Dataset/diets.csv")
+
+# medications_df = pd.read_csv("Dataset/medications.csv")
+# medications_df["Medication"] = medications_df["Medication"].apply(ast.literal_eval)
+# diets_df = pd.read_csv("Dataset/diets.csv")
+# diets_df["Diet"] = diets_df["Diet"].apply(ast.literal_eval)
+###############################################################
+
+# Pre-process DataFrames into dictionaries for fast lookups
+disease_details = {}
+all_diseases = description_df['Disease'].unique()
+for disease in all_diseases:
+    details = {}
+    
+    # Description
+    desc = description_df[description_df['Disease'] == disease]['Description'].values
+    details['description'] = desc[0] if len(desc) > 0 else "No description available."
+    
+    # Precautions
+    prec = precautions_df[precautions_df['Disease'] == disease][['Precaution_1', 'Precaution_2', 'Precaution_3', 'Precaution_4']].values.flatten().tolist()
+    details['precautions'] = [p for p in prec if pd.notna(p)] # Remove any NaN values
+    
+    # Workouts
+    workouts = workout_df[workout_df['disease'] == disease]['workout'].values
+    details['workouts'] = workouts.tolist() if len(workouts) > 0 else []
+
+    # Medications (evaluating string representation of list)
+    meds_str = medications_df[medications_df['Disease'] == disease]['Medication'].values
+    details['medications'] = ast.literal_eval(meds_str[0]) if len(meds_str) > 0 else []
+
+    # Diets (evaluating string representation of list)
+    diets_str = diets_df[diets_df['Disease'] == disease]['Diet'].values
+    details['diets'] = ast.literal_eval(diets_str[0]) if len(diets_str) > 0 else []
+    
+    disease_details[disease] = details
+
+# Load model
 svc = pickle.load(open("model/svc.pkl", "rb"))
 
+# Now, the helper functions are just simple dictionary lookups
+def get_disease_details(disease_name):
+    return disease_details.get(disease_name, {
+        'description': 'Details not found.',
+        'precautions': [],
+        'workouts': [],
+        'medications': [],
+        'diets': []
+    })
 
-# # function
-def medi(dis):
-    results = []
-    if "Disease" in medications1.columns:
-        dis_type = medications1[medications1["Disease"] == dis]
-        for med_list in dis_type["Medication"]:
-            for med in med_list:
-                results.append(med)
-    return results
-
-
-def dieti(dis):
-    results = []
-    if "Disease" in diets1.columns:
-        diet_type = diets1[diets1["Disease"] == dis]
-        for diet_list in diet_type["Diet"]:
-            for die in diet_list:
-                results.append(die)
-    return results
+#  load model
+# svc = pickle.load(open("model/svc.pkl", "rb"))
 
 
-def helper(dis):
-    desc = description[description["Disease"] == dis]["Description"]
-    desc = " ".join([w for w in desc])
+# # # function
+# def medi(dis):
+#     results = []
+#     if "Disease" in medications1.columns:
+#         dis_type = medications1[medications1["Disease"] == dis]
+#         for med_list in dis_type["Medication"]:
+#             for med in med_list:
+#                 results.append(med)
+#     return results
 
-    pre = precautions[precautions["Disease"] == dis][
-        ["Precaution_1", "Precaution_2", "Precaution_3", "Precaution_4"]
-    ]
 
-    pre = pre.values.flatten().tolist()
+# def dieti(dis):
+#     results = []
+#     if "Disease" in diets1.columns:
+#         diet_type = diets1[diets1["Disease"] == dis]
+#         for diet_list in diet_type["Diet"]:
+#             for die in diet_list:
+#                 results.append(die)
+#     return results
 
-    wrkout = workout[workout["disease"] == dis]["workout"]
 
-    return desc, pre, wrkout
+# def helper(dis):
+#     desc = description[description["Disease"] == dis]["Description"]
+#     desc = " ".join([w for w in desc])
+
+#     pre = precautions[precautions["Disease"] == dis][
+#         ["Precaution_1", "Precaution_2", "Precaution_3", "Precaution_4"]
+#     ]
+
+#     pre = pre.values.flatten().tolist()
+
+#     wrkout = workout[workout["disease"] == dis]["workout"]
+
+#     return desc, pre, wrkout
 
 
 symptoms_dict = {
@@ -368,7 +426,8 @@ chat = client.chats.create(
 app = Flask(__name__)
 
 # #############################
-app.secret_key = "your_secret_key"
+
+app.secret_key = os.getenv("SECRET_KEY", "a_default_fallback_key_for_dev") # Use os.getenv
 
 # ---------------------------
 # SQLAlchemy Config
@@ -503,7 +562,29 @@ def home1():
 
 
 
-#  New Login Code -------------------------------------------------------------
+# Login Required Code -------------------------------------------------------------
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        
+        if "user_id" not in session:
+            # flash("⚠️ Please login to access this page.", "warning")
+            return redirect(url_for("login"))
+        
+        
+        user = User.query.get(session["user_id"])
+        
+        
+        if user is None:
+            session.clear()
+            # flash("Your session is invalid. Please log in again.", "danger")
+            return redirect(url_for("login"))
+        
+        
+        g.user = user
+        
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 # --- LOGIN ROUTE (Corrected) ---
@@ -518,7 +599,7 @@ def login():
            
             session["user_id"] = user.id
             flash(f"✅ Welcome, {username} Login successful!", "success")
-            return redirect(url_for("home"))  # Or your desired page, e.g., 'profile'
+            return redirect(url_for("home"))  
         else:
             
             return render_template("index.html", error="Invalid username or password.")
@@ -584,27 +665,18 @@ def register():
 
 
 @app.route("/profile", methods=["GET", "POST"])
+@login_required
 def profile():
     
-    if "user_id" not in session:
-        flash("⚠️ Please login first.", "danger")
-        return redirect(url_for("login"))
-
     
-    user = User.query.get(session["user_id"])
-    if not user:
-        
-        session.clear()
-        return redirect(url_for("login"))
-
     if request.method == "POST":
         new_username = request.form.get("username")
         
-        if new_username and new_username != user.username:
+        if new_username and new_username != g.user.username:
             if User.query.filter_by(username=new_username).first():
                 flash("❌ Username already taken!", "danger")
                 return redirect(url_for("profile"))
-            user.username = new_username
+            g.user.username = new_username
             
 
         
@@ -614,35 +686,33 @@ def profile():
         confirm_password = request.form.get("confirm_password")
 
         if old_password and new_password:
-            if not check_password_hash(user.password_hash, old_password):
+            if not check_password_hash(g.user.password_hash, old_password):
                 flash("❌ Old password is incorrect!", "danger")
                 return redirect(url_for("profile"))
             if new_password != confirm_password:
                 flash("❌ Passwords do not match!", "danger")
                 return redirect(url_for("profile"))
-            user.password_hash = generate_password_hash(new_password)
+            g.user.password_hash = generate_password_hash(new_password)
 
         db.session.commit()
         flash("✅ Profile updated successfully!", "success")
         return redirect(url_for("profile"))
 
-    return render_template("profile.html", user=user, username=user.username)
+    return render_template("profile.html", user=g.user, username=g.user.username)
 
 
 # # # # # # # # # # # # Delete account function and route
 @app.route("/delete_account", methods=["POST"])
+@login_required
 def delete_account():
     
-    if "user_id" not in session:
-        return redirect(url_for("login"))
+    
 
-    user = User.query.get(session["user_id"])
-
-    if user:
+    if g.user:
         
 
         db.session.delete(
-            user
+            g.user
         )  
         db.session.commit()
 
@@ -662,23 +732,17 @@ def delete_account():
 
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
     
-    if "user_id" not in session:
-        return redirect(url_for("home1"))
-
-    user = User.query.get(session["user_id"])
-    if not user:
-        session.clear()
-        flash("Session expired. Please log in again.")
-        return redirect(url_for("home1"))
+    
 
     reports = (
-        MedicalReport.query.filter_by(user_id=user.id)
+        MedicalReport.query.filter_by(user_id= g.user.id)
         .order_by(MedicalReport.uploaded_at.desc())
         .all()
     )
-    return render_template("dashboard.html", user=user, reports=reports)
+    return render_template("dashboard.html", user= g.user, reports=reports)
 
 
 
@@ -693,11 +757,10 @@ def dashboard():
 
 # --- UPLOAD ROUTE (Corrected) ---
 @app.route("/upload", methods=["POST"])
+@login_required
 def upload():
     
-    if "user_id" not in session:
-        flash("⚠️ Please login to upload files.", "danger")
-        return redirect(url_for("login"))
+    
 
     
     if "report" not in request.files:
@@ -712,11 +775,7 @@ def upload():
         return redirect(url_for("dashboard"))
 
     
-    user = User.query.get(session["user_id"])
-    if not user:
-        session.clear()
-        flash("Session expired. Please log in again.", "warning")
-        return redirect(url_for("login"))
+    
 
     safe_name = secure_filename(file.filename)
     data = file.read()
@@ -727,7 +786,7 @@ def upload():
         original_name=safe_name,
         mimetype=file.mimetype,
         size=size,
-        user_id=user.id,
+        user_id=g.user.id,
         data=data,
     )
     db.session.add(report)
@@ -742,22 +801,15 @@ def upload():
 
 
 @app.route("/files/<int:report_id>")
+@login_required
 def download(report_id):
     
-    if "user_id" not in session:
-        flash("⚠️ Please login to download files.", "danger")
-        return redirect(url_for("login"))
-
     
-    user = User.query.get(session["user_id"])
-    if not user:
-        session.clear()
-        return redirect(url_for("login"))
 
     report = MedicalReport.query.get_or_404(report_id)
 
     
-    if report.user_id != user.id:
+    if report.user_id != g.user.id:
         abort(403)  
 
     return send_file(
@@ -773,22 +825,15 @@ def download(report_id):
 
 
 @app.route("/files/<int:report_id>/delete", methods=["POST"])
+@login_required
 def delete_file(report_id):
     
-    if "user_id" not in session:
-        flash("⚠️ Please login to delete files.", "danger")
-        return redirect(url_for("login"))
-
     
-    user = User.query.get(session["user_id"])
-    if not user:
-        session.clear()
-        return redirect(url_for("login"))
 
     report = MedicalReport.query.get_or_404(report_id)
 
    
-    if report.user_id != user.id:
+    if report.user_id != g.user.id:
         abort(403)
 
     db.session.delete(report)
@@ -809,24 +854,11 @@ def logout():
 
 #####################    Home      #######################################
 
-
-
-
-
 @app.route("/home")
+@login_required
 def home():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    user = User.query.get(session["user_id"])
-
-   
-    if not user:
-        session.clear() 
-        flash("Your session has expired. Please log in again.", "warning")
-        return redirect(url_for("login"))
-
-    return render_template("home.html", user=user)
+    # The user object is now available as g.user thanks to the decorator
+    return render_template("home.html", user=g.user)
 
 
 ########################################################
@@ -835,20 +867,9 @@ def home():
 
 
 @app.route("/predict", methods=["GET", "POST"])  
+@login_required
 def form():
     
-    if "user_id" not in session:
-        flash("⚠️ Please login to get a prediction.", "danger")
-        return redirect(url_for("login"))
-
-    
-    user = User.query.get(session["user_id"])
-
-    
-    if not user:
-        session.clear()
-        flash("Your session has expired. Please log in again.", "warning")
-        return redirect(url_for("login"))
 
     
     if request.method == "POST":
@@ -863,14 +884,14 @@ def form():
                 "predict.html",
                 message=message,
                 symptoms_list=list(symptoms_dict.keys()),
-                user=user,  
+                user=g.user,  
             )
 
        
         predicted_disease = get_predicted_value(symptoms)
-        desc, pre, wrkout = helper(predicted_disease)
-        medi2 = medi(predicted_disease)
-        diet2 = dieti(predicted_disease)
+        details = get_disease_details(predicted_disease)
+        # Now you can access details['description'], details['precautions'], etc.
+        # in your render_template call.
         report_time = datetime.now().strftime("%d-%m-%Y %H:%M")
 
         return render_template(
@@ -881,19 +902,19 @@ def form():
             symptoms=symptoms,
             predicted_disease=predicted_disease,
             report_time=report_time,
-            dis_desc=desc,
-            dis_prec=pre,
-            dis_medi=medi2,
-            dis_diet=diet2,
-            dis_wrk=wrkout,
+            dis_desc=details['description'],
+            dis_prec=details['precautions'],
+            dis_medi=details['medications'],
+            dis_diet=details['diets'],
+            dis_wrk=details['workouts'],
             symptoms_list=list(symptoms_dict.keys()),
-            user=user,  
+            user=g.user,  
         )
 
     
     return render_template(
         "predict.html",
-        user=user,  
+        user=g.user,  
         symptoms_list=list(symptoms_dict.keys()),
     )
 
@@ -904,20 +925,10 @@ def form():
 
 
 @app.route("/ai_predict", methods=["GET", "POST"])
+@login_required
 def ai_predict():
     
-    if "user_id" not in session:
-        flash("⚠️ Please login to use the AI prediction service.", "danger")
-        return redirect(url_for("login"))
-
     
-    user = User.query.get(session["user_id"])
-
-    
-    if not user:
-        session.clear()
-        flash("Your session has expired. Please log in again.", "warning")
-        return redirect(url_for("login"))
 
     if request.method == "POST":
         name = request.form.get("name")
@@ -959,13 +970,13 @@ def ai_predict():
 
         return render_template(
             "ai_predict.html",
-            user=user,  
+            user=g.user,  
             result=result,
             report_time=report_time,
         )
 
     
-    return render_template("ai_predict.html", user=user, prediction=None)
+    return render_template("ai_predict.html", user=g.user, prediction=None)
 
 ##########################################################################################
 ######################     Chat Bot       #######################################
@@ -975,30 +986,21 @@ def ai_predict():
 
 
 @app.route("/chatbot")
+@login_required
 def chatbot_page():
-    
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    user = User.query.get(session["user_id"])
-    if not user:
-        session.clear()
-        return redirect(url_for("login"))
-
-    
-    history = Chat.query.filter_by(user_id=user.id).all()
+    history = Chat.query.filter_by(user_id=g.user.id).all()
 
     
     return render_template(
-        "chatbot.html", user=user, history=history
+        "chatbot.html", user=g.user, history=history
     )
 
 
 @app.route("/get_response", methods=["POST"])
+@login_required
 def get_response():
     
-    if "user_id" not in session:
-        return jsonify({"reply": "⚠️ Please login first."})
+    
 
     data = request.get_json()
     user_message = data.get("message")
@@ -1034,23 +1036,10 @@ def clear_chat():
 
 
 ##########################################################################################
-# @app.route('/blog')
-# def blog_index():
-#     user = User.query.get(session["user_id"])
-#     """Displays the main blog page with a list of all posts."""
-#     # Fetch all posts from the database, ordering by the newest ones first
-#     posts = BlogPost.query.order_by(desc(BlogPost.created_at)).all()
-#     return render_template('blog_index.html', posts=posts, user=user)
 
-# @app.route('/blog/post/<int:post_id>')
-# def blog_post(post_id):
-#     user = User.query.get(session["user_id"])
-#     """Displays a single, detailed blog post."""
-#     # Fetch the specific post by its ID, or show a 404 error if not found
-#     post = BlogPost.query.get_or_404(post_id)
-#     return render_template('blog_post.html', post=post, user=user)
 
 @app.route('/blog')
+@login_required
 def blog_index():
     # Safely get the user if they are logged in
     user = None
@@ -1065,33 +1054,33 @@ def blog_index():
         # A post_id was provided, so fetch and display only that post
         single_post = BlogPost.query.get_or_404(post_id)
         # We pass the single post object as 'post'
-        return render_template('blog_index.html', post=single_post, user=user)
+        return render_template('blog_index.html', post=single_post, user=g.user)
     else:
         # --- ALL POSTS VIEW ---
         # No post_id, so display the list of all posts
         all_posts = BlogPost.query.order_by(desc(BlogPost.created_at)).all()
         # We pass the list of all posts as 'posts'
-        return render_template('blog_index.html', posts=all_posts, user=user)
+        return render_template('blog_index.html', posts=all_posts, user=g.user)
 
 @app.route("/about")
+@login_required
 def about():
     user = None
     
-    if "user_id" in session:
-        user = User.query.get(session["user_id"])
     
-    return render_template("about.html", user=user)
+    
+    return render_template("about.html", user=g.user)
 
 # -----------------
 
 @app.route("/contact")
+@login_required
 def contact():
-    user = None
+   
     
-    if "user_id" in session:
-        user = User.query.get(session["user_id"])
     
-    return render_template("contact.html", user=user)
+    
+    return render_template("contact.html", user=g.user)
 ##########################################################################################
 if __name__ == "__main__":
 

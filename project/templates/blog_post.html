@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="blog-post-view">
+                <!-- Post Header -->
+                <h1 class="display-5 mb-3">{{ post.title }}</h1>
+                <p class="text-muted border-bottom pb-3 mb-4">
+                    Posted by <strong>{{ post.author_name }}</strong> on {{ post.created_at.strftime('%B %d, %Y') }}
+                </p>
+
+                <!-- Optional Header Image -->
+                {% if post.image_url %}
+                <img src="{{ post.image_url }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
+                {% endif %}
+
+                <!-- Main Content -->
+                <div class="post-content">
+                    {{ post.content | safe }}
+                </div>
+                
+                <!-- Optional YouTube Embed -->
+                {% if post.youtube_url %}
+                <div class="youtube-embed-container my-4">
+                    <iframe src="{{ post.youtube_url }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                {% endif %}
+
+                <hr>
+                <a href="{{ url_for('main.blog_index') }}" class="btn btn-secondary">&larr; Back to Blog</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

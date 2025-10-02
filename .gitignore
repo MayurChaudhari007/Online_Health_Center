@@ -6,3 +6,7 @@ newvenv
 instance
 demo.html
 demo.css
+__pycache__
+/static/
+/templates/
+app.py
