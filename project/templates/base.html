@@ -40,7 +40,7 @@
   <img src="https://cdn-icons-png.flaticon.com/512/2966/2966508.png" class="floating-icon icon3">
 
   <header>
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top py-3"
+    <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top py-3"
       style="background: linear-gradient(90deg, #1976d2, #42a5f5)">
       <div class="container-fluid">
 
@@ -54,8 +54,8 @@
           <i class="bi" id="theme-icon"></i> </button>
 
         <!-- Mobile Toggle Button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button id="navbarToggler" class="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -63,34 +63,37 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto text-center">
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="/home">🏠 Home</a>
+              <a class="nav-link {% if request.endpoint == 'main.home' %}active{% endif %}" href="/home">🏠 Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'form' %}active{% endif %}" href="/predict">🏥 Predict</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'ai_predict' %}active{% endif %}" href="/ai_predict">🤖 AI
+              <a class="nav-link {% if request.endpoint == 'main.predict' %}active{% endif %}" href="/predict">🏥
                 Predict</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'chatbot_page' %}active{% endif %}" href="/chatbot">💬
+              <a class="nav-link {% if request.endpoint == 'main.ai_predict' %}active{% endif %}" href="/ai_predict">🤖
+                AI
+                Predict</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'main.chatbot_page' %}active{% endif %}" href="/chatbot">💬
                 ChatBot</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="/dashboard">📂
+              <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="/dashboard">📂
                 Storage</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if 'blog' in request.endpoint %}active{% endif %}"
+              <a class="nav-link {% if 'main.blog' in request.endpoint %}active{% endif %}"
                 href="{{ url_for('main.blog_index') }}">📰 Blog</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'about' %}active{% endif %}" href="/about">ℹ️ About</a>
+              <a class="nav-link {% if request.endpoint == 'main.about' %}active{% endif %}" href="/about">ℹ️ About</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}" href="/contact">📞 Contact</a>
+              <a class="nav-link {% if request.endpoint == 'main.contact' %}active{% endif %}" href="/contact">📞
+                Contact</a>
             </li>
-            
+
 
           </ul>
 
@@ -112,14 +115,65 @@
 
   {% block content %}{% endblock %}
 
-  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
     crossorigin="anonymous"></script>
   <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
-  {% block extra_js %} {% endblock %}
+  <script>
+    // --- Overlay Method for Mobile Navbar ---
+
+    // Get references to the collapsible menu and the toggler button
+    const navbarNav = document.getElementById('navbarNav');
+    const toggler = document.getElementById('navbarToggler');
+
+    // This event fires when the navbar menu starts to open
+    navbarNav.addEventListener('show.bs.collapse', function () {
+      // Create a backdrop element
+      let backdrop = document.createElement('div');
+      backdrop.className = 'navbar-backdrop';
+
+      // Append it to the body
+      document.body.appendChild(backdrop);
+
+      // Add a class to the body to prevent scrolling
+      document.body.classList.add('navbar-open');
+
+      // Add an event listener to the backdrop to close the menu when clicked
+      backdrop.addEventListener('click', function () {
+        toggler.click(); // Simulate a click on the toggler to close the menu
+      });
+
+      // A small delay to allow the element to be in the DOM before adding the 'show' class for the fade-in transition
+      setTimeout(() => {
+        backdrop.classList.add('show');
+      }, 10);
+    });
+
+    // This event fires when the navbar menu starts to close
+    navbarNav.addEventListener('hide.bs.collapse', function () {
+      // Find the backdrop
+      const backdrop = document.querySelector('.navbar-backdrop');
+
+      if (backdrop) {
+        // Remove the body class to allow scrolling again
+        document.body.classList.remove('navbar-open');
+
+        // Fade out the backdrop
+        backdrop.classList.remove('show');
+
+        // Remove the backdrop from the DOM after the transition is complete
+        setTimeout(() => {
+          backdrop.remove();
+        }, 300); // This duration should match the CSS transition time
+      }
+    });
+  </script>
+  {% block extra_js %}
+  
+
+  {% endblock %}
 </body>
 
 </html>

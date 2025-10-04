@@ -9,4 +9,4 @@ demo.css
 __pycache__
 /static/
 /templates/
-/app.py/
+app.py 

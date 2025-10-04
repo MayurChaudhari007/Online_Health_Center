@@ -4,6 +4,7 @@ from flask import Flask
 from .config import Config
 from .models import db
 from .routes import main_bp
+from .extensions import mail
 
 def create_app(config_class=Config):
     # Create and configure the app
@@ -12,6 +13,7 @@ def create_app(config_class=Config):
 
     # Initialize extensions
     db.init_app(app)
+    mail.init_app(app)
 
     # Register blueprints
     app.register_blueprint(main_bp)

@@ -1,4 +1,4 @@
-/* File: base.css */
+
 body {
   
   background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
@@ -7,7 +7,33 @@ body {
   overflow-x: hidden;
   padding-top: 70px;
 }
+/* --- Navbar Overlay Method Styles --- */
+.navbar.fixed-top {
+  z-index: 1040; /* Ensures navbar stays above the new backdrop */
+}
+/* This class is added to the <body> to prevent scrolling when the menu is open */
+body.navbar-open {
+  overflow: hidden;
+}
 
+/* This is the semi-transparent backdrop that covers the page */
+.navbar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Make sure it's above the page content but below the navbar menu */
+  z-index: 1035; 
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* This class is added to the backdrop to fade it in */
+.navbar-backdrop.show {
+  opacity: 1;
+}
 /* Navbar */
 .navbar-nav .nav-link {
   font-size: 1rem;

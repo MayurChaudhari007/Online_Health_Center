@@ -24,6 +24,9 @@ import re
 import json
 import concurrent.futures
 
+from flask_mail import Message 
+from .extensions import mail   
+
 # Import from our own project files
 from .models import db, User, Chat, MedicalReport, BlogPost
 from .services import (
@@ -307,7 +310,41 @@ def about():
     user = User.query.get(session["user_id"]) if "user_id" in session else None
     return render_template("about.html", user=user)
 
-@main_bp.route("/contact")
+# @main_bp.route("/contact")
+# def contact():
+#     user = User.query.get(session["user_id"]) if "user_id" in session else None
+#     return render_template("contact.html", user=user)
+
+@main_bp.route("/contact", methods=["GET", "POST"]) # <-- Add methods
 def contact():
+    if request.method == "POST":
+        # Get form data
+        name = request.form.get("name")
+        email = request.form.get("email")
+        message_body = request.form.get("message")
+
+        # Basic validation
+        if not name or not email or not message_body:
+            flash("All fields are required.", "danger")
+            return redirect(url_for("main.contact"))
+
+        # Create the email message
+        msg = Message(
+            subject=f"New Contact Form Submission from {name}",
+            sender=current_app.config['MAIL_USERNAME'],
+            recipients=[current_app.config['MAIL_USERNAME']]  # Send to yourself
+        )
+        msg.body = f"From: {name} <{email}>\n Message : {message_body}"
+
+        try:
+            # Send the email
+            mail.send(msg)
+            flash("Thank you for your message! It has been sent.", "success")
+        except Exception as e:
+            flash(f"An error occurred: {e}", "danger")
+
+        return redirect(url_for("main.contact"))
+
+    # GET request just displays the page
     user = User.query.get(session["user_id"]) if "user_id" in session else None
     return render_template("contact.html", user=user)

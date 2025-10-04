@@ -3,6 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash
+# from .extensions import db
 
 # Create the database instance, but don't attach the app yet
 db = SQLAlchemy()
